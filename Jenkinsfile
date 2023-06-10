@@ -19,7 +19,7 @@ pipeline {
             }
         }
 
-        stage('sonarqube validator'){
+        stage('sonarqube validation'){
             steps {
                 script{
                     scannerHome = tool 'sonar-scanner';
@@ -29,6 +29,13 @@ pipeline {
                 }
             }
         }
+
+        stage('Quality Gate'){
+            steps{
+                waitForQualityGate abortPipeline: true
+            }
+        }
+
 
         stage('teste da aplicação') {
             steps {
