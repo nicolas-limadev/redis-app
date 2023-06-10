@@ -3,6 +3,7 @@ const { parse } = require('path');
 const redis = require('redis');
 
 const app = express();
+app.disable('x-powered-by');
 const client = redis.createClient({
     host: 'redis-server',
     port: 6379
