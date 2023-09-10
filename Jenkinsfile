@@ -21,11 +21,9 @@ pipeline {
 
         stage('sonarqube validation') {
             steps {
-                script {
-                    scannerHome = tool 'sonar-scanner'
-                }
-                withSonarQubeEnv('sonar-server') {
-                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=redis-app -Dsonar.sources=. -Dsonar.host.url=${env.SONAR_HOST_URL} -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
+                def scannerHome = tool 'SonarScanner'
+                withSonarQubeEnv() {
+                    sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
         }
@@ -58,6 +56,13 @@ pipeline {
                         sh 'docker push ${NEXUS_URL}/devops/app'
                     }
                 }
+            }
+        }
+
+        stage('Apply k8s files') {
+            steps {
+                sh '/usr/local/bin/kubectl apply -f ./k3s/redis.yaml'
+                sh '/usr/local/bin/kubectl apply -f ./k3s/redis-app.yaml'
             }
         }
     }
